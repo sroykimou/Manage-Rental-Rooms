@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ចូលប្រើប្រាស់ | ចុះឈ្មោះគណនី</title>
+    <!-- Google Fonts for Khmer -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kantumruy:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-color: #0056b3;
+        --primary-hover: #004494;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        --white: #ffffff;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --border-radius: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --error: #e74c3c;
+        --success: #2ecc71;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Kantumruy", sans-serif;
+        background: var(--bg-gradient);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: var(--text-dark);
+      }
+
+      /* Accessibility: Visually hide labels but keep them for screen readers */
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      .container {
+        background: var(--white);
+        width: 100%;
+        max-width: 400px; /* Default width */
+        padding: 40px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        transition: max-width 0.5s ease;
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .form-header h2 {
+        font-size: 26px;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .form-header p {
+        color: var(--text-light);
+        font-size: 15px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .input-group i.left-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+        font-size: 18px;
+        transition: var(--transition);
+        pointer-events: none;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 15px 45px 15px 45px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: "Kantumruy", sans-serif;
+        outline: none;
+        transition: var(--transition);
+        background: #fafafa;
+      }
+
+      .input-group input:focus {
+        border-color: var(--primary-color);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+      }
+
+      .input-group input:focus ~ i.left-icon {
+        color: var(--primary-color);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 15px;
+        background: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-family: "Kantumruy", sans-serif;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 600;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .switch-text {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 15px;
+        color: var(--text-light);
+      }
+
+      .switch-text a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .switch-text a:hover {
+        text-decoration: underline;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #aaa;
+        z-index: 10;
+        padding: 5px;
+        transition: var(--transition);
+      }
+
+      .toggle-password:hover {
+        color: var(--primary-color);
+      }
+
+      /* View Management */
+      .view-section {
+        display: none;
+        animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .view-section.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        pointer-events: none;
+      }
+
+      .toast {
+        background: var(--white);
+        color: var(--text-dark);
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 280px;
+        border-left: 5px solid var(--primary-color);
+        animation: slideIn 0.3s ease-out forwards;
+        font-size: 14px;
+        pointer-events: auto;
+      }
+
+      .toast.success {
+        border-left-color: var(--success);
+      }
+      .toast.success i {
+        color: var(--success);
+      }
+
+      .toast.error {
+        border-left-color: var(--error);
+      }
+      .toast.error i {
+        color: var(--error);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast-container"></div>
+
+    <div class="container" id="main-container">
+      <!-- Login Section -->
+      <div id="login-section" class="view-section active">
+        <div class="form-header">
+          <h2>ស្វាគមន៍ត្រឡប់មកវិញ</h2>
+          <p>សូមចូលប្រើប្រាស់ដោយប្រើឈ្មោះរបស់អ្នក</p>
+        </div>
+        <form id="login-form">
+          <div class="input-group">
+            <label for="login-username" class="visually-hidden"
+              >ឈ្មោះអ្នកប្រើប្រាស់</label
+            >
+            <input
+              type="text"
+              id="login-username"
+              placeholder="ឈ្មោះអ្នកប្រើប្រាស់"
+              required
+              autocomplete="username"
+            />
+            <i class="fas fa-user left-icon"></i>
+          </div>
+          <div class="input-group">
+            <label for="login-password" class="visually-hidden"
+              >ពាក្យសម្ងាត់</label
+            >
+            <input
+              type="password"
+              id="login-password"
+              placeholder="ពាក្យសម្ងាត់"
+              required
+              autocomplete="current-password"
+            />
+            <i class="fas fa-lock left-icon"></i>
+            <i
+              class="fas fa-eye toggle-password"
+              id="toggle-login-pass"
+              tabindex="0"
+              role="button"
+              aria-label="បង្ហាញពាក្យសម្ងាត់"
+            ></i>
+          </div>
+          <button type="submit" class="btn">
+            <span>ចូលប្រើប្រាស់</span>
+          </button>
+        </form>
+        <div class="switch-text">
+          មិនទាន់មានគណនីទេ?
+          <a id="link-to-register">ចុះឈ្មោះឥឡូវនេះ</a>
+        </div>
+      </div>
+
+      <!-- Register Section -->
+      <div id="register-section" class="view-section">
+        <div class="form-header">
+          <h2>បង្កើតគណនីថ្មី</h2>
+          <p>សូមបំពេញឈ្មោះ និងពាក្យសម្ងាត់</p>
+        </div>
+        <form id="register-form">
+          <div class="input-group">
+            <label for="reg-username" class="visually-hidden"
+              >ឈ្មោះអ្នកប្រើប្រាស់</label
+            >
+            <input
+              type="text"
+              id="reg-username"
+              placeholder="ឈ្មោះអ្នកប្រើប្រាស់"
+              required
+              autocomplete="username"
+            />
+            <i class="fas fa-user left-icon"></i>
+          </div>
+          <div class="input-group">
+            <label for="reg-password" class="visually-hidden"
+              >ពាក្យសម្ងាត់</label
+            >
+            <input
+              type="password"
+              id="reg-password"
+              placeholder="ពាក្យសម្ងាត់"
+              required
+              autocomplete="new-password"
+            />
+            <i class="fas fa-lock left-icon"></i>
+            <i
+              class="fas fa-eye toggle-password"
+              id="toggle-reg-pass"
+              tabindex="0"
+              role="button"
+              aria-label="បង្ហាញពាក្យសម្ងាត់"
+            ></i>
+          </div>
+          <button type="submit" class="btn">
+            <span>ចុះឈ្មោះ</span>
+          </button>
+        </form>
+        <div class="switch-text">
+          មានគណនីហើយ? <a id="link-to-login">ចូលប្រើប្រាស់</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- View Management ---
+      function switchView(viewId) {
+        document.querySelectorAll(".view-section").forEach((sec) => {
+          sec.classList.remove("active");
+        });
+        const target = document.getElementById(viewId);
+        if (target) target.classList.add("active");
+      }
+
+      // --- Event Listeners for Links ---
+      document
+        .getElementById("link-to-register")
+        .addEventListener("click", () => switchView("register-section"));
+      document
+        .getElementById("link-to-login")
+        .addEventListener("click", () => switchView("login-section"));
+
+      // --- Password Toggles ---
+      function setupPasswordToggle(toggleId, inputId) {
+        const toggleBtn = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+
+        toggleBtn.addEventListener("click", () => {
+          const type =
+            input.getAttribute("type") === "password" ? "text" : "password";
+          input.setAttribute("type", type);
+
+          toggleBtn.classList.toggle("fa-eye");
+          toggleBtn.classList.toggle("fa-eye-slash");
+        });
+
+        toggleBtn.addEventListener("keypress", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleBtn.click();
+          }
+        });
+      }
+
+      setupPasswordToggle("toggle-login-pass", "login-password");
+      setupPasswordToggle("toggle-reg-pass", "reg-password");
+
+      // --- Toast Notifications ---
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        const icon =
+          type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.animation = "slideOut 0.3s ease-in forwards";
+          toast.addEventListener("animationend", () => toast.remove());
+        }, 3000);
+      }
+
+      // --- LocalStorage Helpers ---
+      function getUsers() {
+        const users = localStorage.getItem("app_users");
+        return users ? JSON.parse(users) : {};
+      }
+
+      function saveUsers(users) {
+        localStorage.setItem("app_users", JSON.stringify(users));
+      }
+
+      // --- Check Session & Redirect ---
+      function checkSession() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        const currentUser = localStorage.getItem("currentUser");
+
+        if (isLoggedIn === "true" && currentUser) {
+          // If logged in, redirect to home.html immediately
+          window.location.href = "home.html";
+        } else {
+          // Not logged in, show login form
+          switchView("login-section");
+        }
+      }
+
+      // --- Form Handlers ---
+
+      // 1. Register
+      document
+        .getElementById("register-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const username = document.getElementById("reg-username").value.trim();
+          const password = document.getElementById("reg-password").value;
+
+          if (!username || !password) {
+            showToast("សូមបំពេញឈ្មោះ និងពាក្យសម្ងាត់", "error");
+            return;
+          }
+
+          let users = getUsers();
+
+          if (users.hasOwnProperty(username)) {
+            showToast("ឈ្មោះអ្នកប្រើប្រាស់នេះបានប្រើរួចហើយ", "error");
+            return;
+          }
+
+          users[username] = password;
+          saveUsers(users);
+
+          showToast("ការចុះឈ្មោះបានជោគជ័យ!", "success");
+
+          this.reset();
+          setTimeout(() => {
+            switchView("login-section");
+          }, 1500);
+        });
+
+      // 2. Login
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const username = document
+            .getElementById("login-username")
+            .value.trim();
+          const password = document.getElementById("login-password").value;
+
+          if (!username || !password) {
+            showToast("សូមបំពេញព័ត៌មានឲ្យបានគ្រប់គ្រាន់", "error");
+            return;
+          }
+
+          const users = getUsers();
+
+          if (!users.hasOwnProperty(username)) {
+            showToast("គណនីមិនមាននៅក្នុងប្រព័ន្ធ", "error");
+            return;
+          }
+
+          if (users[username] !== password) {
+            showToast("ពាក្យសម្ងាត់មិនត្រឹមត្រូវ", "error");
+            return;
+          }
+
+          // Success Login
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("currentUser", username);
+
+          showToast("ការចូលប្រើប្រាស់ជោគជ័យ!", "success");
+          this.reset();
+
+          // Redirect to home.html
+          setTimeout(() => {
+            window.location.href = "home.html";
+          }, 1000);
+        });
+
+      // --- Initialization ---
+      window.addEventListener("DOMContentLoaded", () => {
+        checkSession();
+      });
+    </script>
+  </body>
+</html>

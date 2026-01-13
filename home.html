@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0056b3" />
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>គ្រប់គ្រងបន្ទប់ជួល</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kantumruy:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-color: #0056b3;
+        --secondary-color: #f0f2f5;
+        --accent-color: #28a745;
+        --save-all-color: #e67e22;
+        --print-all-color: #6c757d;
+        --danger-color: #e74c3c;
+        --text-dark: #333;
+        --white: #ffffff;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --radius: 8px;
+      }
+
+      body {
+        font-family: "Kantumruy", sans-serif;
+        background-color: var(--secondary-color);
+        margin: 0;
+        padding: 20px;
+        color: var(--text-dark);
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto 20px auto;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+        gap: 15px;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      h1 {
+        color: var(--primary-color);
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .date-container {
+        background: var(--white);
+        padding: 10px 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 2px solid var(--primary-color);
+        width: 100%;
+        justify-content: center;
+      }
+      .date-container label {
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      input[type="date"] {
+        font-family: "Kantumruy", sans-serif;
+        font-size: 16px;
+        padding: 5px;
+        border: none;
+        outline: none;
+        color: var(--text-dark);
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-family: "Kantumruy", sans-serif;
+        font-weight: 600;
+        transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+      .btn-add {
+        background-color: var(--primary-color);
+        color: var(--white);
+      }
+      .btn-print {
+        background-color: var(--print-all-color);
+        color: var(--white);
+      }
+      .btn-save-all {
+        background-color: var(--save-all-color);
+        color: var(--white);
+        box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4);
+        font-size: 16px;
+      }
+      .btn-logout {
+        background-color: var(--danger-color);
+        color: var(--white);
+      }
+      .btn-delete-room {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        float: right;
+        font-size: 18px;
+      }
+
+      /* Grid Layout for Rooms */
+      .room-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto 40px auto;
+      }
+
+      /* Room Card */
+      .room-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        position: relative;
+        border-top: 4px solid var(--primary-color);
+      }
+      .room-header {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      /* Input Rows */
+      .utility-row {
+        margin-bottom: 15px;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: var(--radius);
+        border-left: 4px solid var(--primary-color);
+      }
+      .utility-row.energy {
+        border-left-color: #f39c12;
+      }
+      .utility-row.water {
+        border-left-color: #3498db;
+      }
+      .utility-row.rent {
+        border-left-color: #9b59b6;
+      }
+
+      .row-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+        display: block;
+        font-weight: bold;
+      }
+      .input-group-inline {
+        display: flex;
+        gap: 10px;
+      }
+      .input-field {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .input-field label {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 4px;
+      }
+      .input-field input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: "Kantumruy", sans-serif;
+        width: 100%;
+      }
+
+      /* Price/Total Line */
+      .total-row {
+        border-top: 2px dashed #ddd;
+        padding-top: 15px;
+        margin-top: 10px;
+      }
+
+      .price-display {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+      .price-display span.total-cost {
+        color: var(--primary-color);
+        font-size: 22px;
+      }
+
+      /* History Section */
+      .history-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border-top: 4px solid var(--primary-color);
+      }
+      .history-title {
+        font-size: 20px;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .history-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        transition: background 0.2s;
+      }
+      .history-item:hover {
+        background-color: #f9f9f9;
+      }
+      .history-content {
+        flex: 1;
+      }
+      .history-info h4 {
+        margin: 0 0 5px 0;
+        color: var(--primary-color);
+      }
+      .history-details {
+        font-size: 14px;
+        color: #666;
+      }
+      .history-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .history-total {
+        font-weight: bold;
+        color: var(--accent-color);
+        font-size: 18px;
+        min-width: 80px;
+        text-align: right;
+      }
+      .btn-delete-history {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 5px;
+        transition: color 0.2s;
+      }
+      .btn-delete-history:hover {
+        color: var(--danger-color);
+      }
+      .empty-history {
+        text-align: center;
+        color: #999;
+        padding: 20px;
+      }
+
+      /* Toast Notification */
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+      .toast {
+        background: #333;
+        color: #fff;
+        padding: 12px 24px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      /* --- PRINT / INVOICE STYLES (3 ROOMS PER PAGE) --- */
+      #printable-area {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      @media print {
+        body {
+          margin: 0;
+        }
+        @page {
+          size: A4;
+          margin: 10mm;
+        }
+
+        /* Hide App UI */
+        header,
+        .header-actions,
+        .date-container,
+        .room-grid,
+        .history-section,
+        .btn-delete-room,
+        #toast-container {
+          display: none !important;
+        }
+
+        /* Printable area MUST be flex */
+        #printable-area {
+          display: block !important;
+          width: 100%;
+        }
+        /* EACH invoice = 1/3 page */
+        .invoice-sheet {
+          width: 100%;
+          height: 25%; /* 4 rooms per page */
+          box-sizing: border-box;
+          padding: 8px;
+          border-bottom: 1px dashed #000;
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+
+        /* HARD page break after every 4 invoices */
+        .invoice-sheet:nth-child(5n) {
+          page-break-after: always;
+        }
+        .invoice-header {
+          text-align: center;
+          font-weight: bold;
+          font-size: 12pt;
+          margin-bottom: 6px;
+        }
+        .date-section {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          font-size: 11pt;
+        }
+        .row {
+          margin-bottom: 6px;
+          font-size: 11pt;
+        }
+        .footer {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 10px;
+          font-size: 11pt;
+        }
+
+        .dots {
+          border-bottom: none;
+          margin: 0 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast-container"></div>
+
+    <header>
+      <div class="header-top" style="width: 100%">
+        <h1><i class="fas fa-home"></i> គ្រប់គ្រងបន្ទប់ជួល</h1>
+        <div class="header-actions">
+          <button class="btn btn-print" onclick="printAllInvoices()">
+            <i class="fas fa-print"></i> បោះពុម្ព (A4/PDF)
+          </button>
+          <button class="btn btn-save-all" onclick="saveAll()">
+            <i class="fas fa-save"></i> រក្សាទុកព័ត៍មានទាំងអស់
+          </button>
+          <button class="btn btn-add" onclick="addRoom()">
+            <i class="fas fa-plus"></i> បន្ថែមបន្ទប់
+          </button>
+          <button class="btn btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> ចាកចេញ
+          </button>
+        </div>
+      </div>
+      <div class="date-container">
+        <label for="billing-date">កាលបរិច្ឆេទគិតប្រាក់:</label>
+        <input type="date" id="billing-date" />
+      </div>
+    </header>
+
+    <div id="room-grid" class="room-grid"></div>
+
+    <section class="history-section">
+      <div class="history-title">
+        <span><i class="fas fa-history"></i> ប្រវត្តិការរក្សាទុក</span>
+      </div>
+      <div id="history-list" class="history-list">
+        <div class="empty-history">មិនទាន់មានប្រវត្តិទេ។</div>
+      </div>
+    </section>
+
+    <!-- PRINTABLE AREA -->
+    <div id="printable-area"></div>
+
+    <script>
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      // Security Check
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      const currentUser = localStorage.getItem("currentUser");
+
+      if (isLoggedIn !== "true" || !currentUser) {
+        alert("សូមចូលប្រើប្រាស់ជាមុនសិន!");
+        window.location.href = "login.html";
+      }
+
+      const dateInput = document.getElementById("billing-date");
+      dateInput.valueAsDate = new Date();
+
+      let rooms =
+        JSON.parse(localStorage.getItem(`rooms_${currentUser}`)) || [];
+      let history =
+        JSON.parse(localStorage.getItem(`history_${currentUser}`)) || [];
+
+      // Render Rooms
+      function renderRooms() {
+        const grid = document.getElementById("room-grid");
+        grid.innerHTML = "";
+        if (rooms.length === 0) {
+          grid.innerHTML =
+            '<p style="text-align:center; color:#888; grid-column: 1/-1;">មិនមានបន្ទប់ទេ។ សូមចុច "បន្ថែមបន្ទប់" ដើម្បីចាប់ផ្តើម។</p>';
+          return;
+        }
+        rooms.forEach((room, index) => {
+          const waterUsage = (room.newWater || 0) - (room.oldWater || 0);
+          const energyUsage = (room.newEnergy || 0) - (room.oldEnergy || 0);
+          const safeWaterUsage = waterUsage < 0 ? 0 : waterUsage;
+          const safeEnergyUsage = energyUsage < 0 ? 0 : energyUsage;
+
+          const waterCost = safeWaterUsage * (room.priceWater || 0);
+          const energyCost = safeEnergyUsage * (room.priceEnergy || 0);
+          const rentCost = room.roomRent || 0;
+          const totalCost = waterCost + energyCost;
+
+          const card = document.createElement("div");
+          card.className = "room-card";
+          card.innerHTML = `
+            <div class="room-header">${
+              room.name
+            } <i class="fas fa-trash btn-delete-room" onclick="deleteRoom(${index})"></i></div>
+            <div class="utility-row water">
+              <span class="row-title"><i class="fas fa-tint"></i> ទឹក (Water)</span>
+              <div class="input-group-inline">
+                <div class="input-field"><label>លេខចាស់ (Old)</label><input type="number" value="${
+                  room.oldWater || 0
+                }" onchange="updateRoomData(${index}, 'oldWater', this.value)"></div>
+                <div class="input-field"><label>លេខថ្មី (New)</label><input type="number" value="${
+                  room.newWater || 0
+                }" onchange="updateRoomData(${index}, 'newWater', this.value)"></div>
+                <div class="input-field"><label>តម្លៃ/ឯកតា</label><input type="number" value="${
+                  room.priceWater || 0
+                }" onchange="updateRoomData(${index}, 'priceWater', this.value)"></div>
+              </div>
+            </div>
+            <div class="utility-row energy">
+              <span class="row-title"><i class="fas fa-bolt"></i> ភ្លើង (Energy)</span>
+              <div class="input-group-inline">
+                <div class="input-field"><label>លេខចាស់ (Old)</label><input type="number" value="${
+                  room.oldEnergy || 0
+                }" onchange="updateRoomData(${index}, 'oldEnergy', this.value)"></div>
+                <div class="input-field"><label>លេខថ្មី (New)</label><input type="number" value="${
+                  room.newEnergy || 0
+                }" onchange="updateRoomData(${index}, 'newEnergy', this.value)"></div>
+                <div class="input-field"><label>តម្លៃ/ឯកតា</label><input type="number" value="${
+                  room.priceEnergy || 0
+                }" onchange="updateRoomData(${index}, 'priceEnergy', this.value)"></div>
+              </div>
+            </div>
+            <div class="utility-row rent">
+              <span class="row-title"><i class="fas fa-bed"></i> តម្លៃបន្ទប់ (Room Price)</span>
+              <div class="input-field"><label>តម្លៃក្នុង១ខែ ($)</label><input type="number" value="${
+                room.roomRent || 0
+              }" onchange="updateRoomData(${index}, 'roomRent', this.value)" placeholder="0"></div>
+            </div>
+            <div class="total-row">
+              <div class="price-display"><span>សរុប (ទឹក+ភ្លើង):</span><span class="total-cost">${totalCost.toLocaleString()} ៛</span></div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      // Render History
+      function renderHistory() {
+        const list = document.getElementById("history-list");
+        list.innerHTML = "";
+        if (history.length === 0) {
+          list.innerHTML =
+            '<div class="empty-history">មិនទាន់មានប្រវត្តិទេ។</div>';
+          return;
+        }
+        history.forEach((item, index) => {
+          const div = document.createElement("div");
+          div.className = "history-item";
+          div.innerHTML = `
+            <div class="history-content">
+              <h4>${
+                item.roomName
+              } <span style="font-size: 12px; color: #888;">(${
+            item.date
+          })</span></h4>
+              <div class="history-details"><i class="fas fa-tint"></i> ${
+                item.waterUsed
+              } ឯកតា | <i class="fas fa-bolt"></i> ${item.energyUsed} ឯកតា</div>
+            </div>
+            <div class="history-right">
+              <div class="history-total">${item.totalCost.toLocaleString()} ៛</div>
+              <button class="btn-delete-history" onclick="deleteHistoryItem(${index})" title="លុបប្រវត្តិ"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      }
+
+      // Print All (3 Rooms Per Page)
+      function printAllInvoices() {
+        const area = document.getElementById("printable-area");
+        area.innerHTML = "";
+        const dateValue = dateInput.value;
+        const d = dateValue ? new Date(dateValue) : new Date();
+        const day = String(d.getDate()).padStart(2, "0");
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const year = d.getFullYear();
+
+        if (rooms.length === 0) {
+          alert("មិនមានបន្ទប់ទេ។");
+          return;
+        }
+
+        rooms.forEach((room) => {
+          const waterUsage = (room.newWater || 0) - (room.oldWater || 0);
+          const energyUsage = (room.newEnergy || 0) - (room.oldEnergy || 0);
+          const safeWaterUsage = waterUsage < 0 ? 0 : waterUsage;
+          const safeEnergyUsage = energyUsage < 0 ? 0 : energyUsage;
+
+          const waterCost = safeWaterUsage * (room.priceWater || 0);
+          const energyCost = safeEnergyUsage * (room.priceEnergy || 0);
+          const rentCost = room.roomRent || 0;
+
+          // Total = Water + Energy ONLY (No Rent)
+          const totalCost = waterCost + energyCost;
+
+          const invoiceHTML = `
+            <div class="invoice-sheet">
+              <div class="invoice-header">វិក្កយបត្រទឹកភ្លើងប្រចាំខែ</div>
+              <div class="date-section">
+                <div style="display: flex; flex: 2;">
+                 ថ្ងៃទី <span class="dots w-small">${day}</span> 
+                 ខែ <span class="dots w-med">${month}</span> 
+                 ឆ្នាំ <span class="dots w-med">${year}</span>
+ 
+                </div>
+                <div style="display: flex; flex: 1; margin-left: 20px;">
+                  បន្ទប់លេខ: <span class="dots">${room.name}</span> 
+                </div>
+              </div>
+              <div class="row">
+                - លេខនាឡិកាទឹក(ចាស់): <span class="dots">${room.oldWater}</span>
+                លេខថ្មី: <span class="dots">${room.newWater}</span>
+                ចំនួនប្រើប្រាស់: <span class="dots">${safeWaterUsage}</span>
+                M<sup>3</sup> &times; ${room.priceWater}រៀល = <span class="dots w-med">${waterCost}រៀល</span>
+              </div>
+              <div class="row">
+                - លេខនាឡិកាភ្លើង(ចាស់): <span class="dots">${room.oldEnergy}</span>
+                លេខថ្មី: <span class="dots">${room.newEnergy}</span>
+                ចំនួនប្រើប្រាស់: <span class="dots">${safeEnergyUsage}</span>
+                KW &times; ${room.priceEnergy}រៀល = <span class="dots w-med">${energyCost}រៀល</span>
+              </div>
+              <div class="footer">
+                <div style="display: flex; flex: 1.5;">
+                  កំណត់ចំណាំ: <span class="dots"></span>
+                </div>
+                <div style="display: flex; flex: 1; margin: 0 20px;">
+                  តម្លៃបន្ទប់ : <span class="dots">${rentCost}$</span>
+                </div>
+                <div style="display: flex; flex: 1.5;">
+                  ចំនួនសរុប: <span class="dots w-med">${totalCost}រៀល</span>
+                </div>
+              </div>
+            </div>
+            
+          `;
+          area.innerHTML += invoiceHTML;
+        });
+        window.print();
+      }
+
+      // App Logic Functions
+      function addRoom() {
+        const roomNumber = rooms.length + 1;
+        rooms.push({
+          name: "Room " + roomNumber,
+          oldWater: 0,
+          newWater: 0,
+          priceWater: 3000,
+          oldEnergy: 0,
+          newEnergy: 0,
+          priceEnergy: 1500,
+          roomRent: 0,
+        });
+        saveToLocalStorage();
+        renderRooms();
+        showToast("បានបន្ថែមបន្ទប់ថ្មីហើយ!");
+      }
+
+      function deleteRoom(index) {
+        if (confirm("តើអ្នកប្រាកដជាចង់លុបបន្ទប់នេះទេ?")) {
+          rooms.splice(index, 1);
+          saveToLocalStorage();
+          renderRooms();
+          showToast("បានលុបបន្ទប់ហើយ!");
+        }
+      }
+
+      function deleteHistoryItem(index) {
+        if (confirm("តើអ្នកប្រាកដជាចង់លុបប្រវត្តិនេះទេ?")) {
+          history.splice(index, 1);
+          localStorage.setItem("roomHistory", JSON.stringify(history));
+          renderHistory();
+          showToast("បានលុបប្រវត្តិហើយ!");
+        }
+      }
+
+      function updateRoomData(index, field, value) {
+        rooms[index][field] = parseFloat(value) || 0;
+        saveToLocalStorage();
+        renderRooms();
+      }
+
+      function saveAll() {
+        const currentDate = document.getElementById("billing-date").value;
+        let savedCount = 0;
+        rooms.forEach((room) => {
+          const waterUsed = (room.newWater || 0) - (room.oldWater || 0);
+          const energyUsed = (room.newEnergy || 0) - (room.oldEnergy || 0);
+          const waterCost = Math.max(0, waterUsed) * (room.priceWater || 0);
+          const energyCost = Math.max(0, energyUsed) * (room.priceEnergy || 0);
+          const rentCost = room.roomRent || 0;
+
+          // History logic excludes rent
+          const totalCost = waterCost + energyCost;
+
+          if (waterUsed > 0 || energyUsed > 0 || rentCost > 0) {
+            history.unshift({
+              date: currentDate,
+              roomName: room.name,
+              waterUsed: Math.max(0, waterUsed),
+              energyUsed: Math.max(0, energyUsed),
+              totalCost: totalCost,
+              timestamp: new Date().getTime(),
+            });
+            room.oldWater = room.newWater;
+            room.oldEnergy = room.newEnergy;
+            room.newWater = 0;
+            room.newEnergy = 0;
+            savedCount++;
+          }
+        });
+        localStorage.setItem("rooms", JSON.stringify(rooms));
+        localStorage.setItem("roomHistory", JSON.stringify(history));
+        renderRooms();
+        renderHistory();
+        if (savedCount > 0) {
+          showToast("បានរក្សាទុកទាំងអស់ជោគជ័យ!");
+        } else {
+          showToast("មិនមានព័ត៌មានត្រូវរក្សាទុកទេ។");
+        }
+      }
+
+      function saveToLocalStorage() {
+        localStorage.setItem("rooms", JSON.stringify(rooms));
+      }
+
+      function showToast(message) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerText = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+
+      window.onload = function () {
+        renderRooms();
+        renderHistory();
+      };
+    </script>
+  </body>
+</html>
